@@ -1,0 +1,15 @@
+##maven compile
+**/target/
+
+##mac files
+*.DS_Store
+
+##idea files
+*.iml
+.idea/
+*.ipr
+*.iws
+
+##bak files
+*.bak
+*.log
