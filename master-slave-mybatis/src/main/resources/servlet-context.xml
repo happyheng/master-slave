@@ -13,4 +13,60 @@
     <mvc:annotation-driven/>
     <!-- 扫描器 -->
     <context:component-scan base-package="com.happyheng"/>
+
+    <bean id="propertyConfigurer"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath:dataSource.properties</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="masterDataSource" class="org.apache.commons.dbcp.BasicDataSource"
+          destroy-method="close">
+        <property name="driverClassName" value="${master.driver}" />
+        <property name="url" value="${master.dburl}" />
+        <property name="username" value="${master.user}" />
+        <property name="password" value="${master.password}" />
+    </bean>
+
+    <bean id="slaveDataSource1" class="org.apache.commons.dbcp.BasicDataSource"
+          destroy-method="close">
+        <property name="driverClassName" value="${slave1.driver}" />
+        <property name="url" value="${slave1.dburl}" />
+        <property name="username" value="${slave1.user}" />
+        <property name="password" value="${slave1.password}" />
+    </bean>
+
+    <bean id="slaveDataSource2" class="org.apache.commons.dbcp.BasicDataSource"
+          destroy-method="close">
+        <property name="driverClassName" value="${slave2.driver}" />
+        <property name="url" value="${slave2.dburl}" />
+        <property name="username" value="${slave2.user}" />
+        <property name="password" value="${slave2.password}" />
+    </bean>
+
+    <bean id="dataSource" class="com.happyheng.datasource.OptionalDataSource" >
+        <!-- 通过key-value的形式来关联数据源 -->
+        <property name="targetDataSources">
+            <map>
+                <entry key="masterDataSource" value-ref="masterDataSource" />
+                <entry key="slaveDataSource1" value-ref="slaveDataSource1" />
+                <entry key="slaveDataSource2" value-ref="slaveDataSource2" />
+            </map>
+        </property>
+        <property name="defaultTargetDataSource" ref="masterDataSource" />
+    </bean>
+
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="mapperLocations" value="classpath*:mybatis/**/*Mapper.xml"/>
+    </bean>
+
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="annotationClass" value="org.springframework.stereotype.Repository"/>
+        <property name="basePackage" value="com.happyheng.dao"/>
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+    </bean>
 </beans>
