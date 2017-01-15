@@ -8,9 +8,23 @@ import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
  */
 public class OptionalDataSource extends AbstractRoutingDataSource {
 
+    // 数据源
+    private String masterDataSource = "masterDataSource";
+    private String[] slaveDataSource = {"slaveDataSource1", "slaveDataSource2"};
 
     @Override
     protected Object determineCurrentLookupKey() {
-        return null;
+
+
+        DataSourceProxy.DataSourceEnum dataSourceEnum = DataSourceProxy.getDataSource();
+
+        if (dataSourceEnum == DataSourceProxy.DataSourceEnum.SLAVE) {
+
+            double random = Math.random();
+            int randomIndex = (int)(random * slaveDataSource.length);
+            return slaveDataSource[randomIndex];
+        } else {
+            return masterDataSource;
+        }
     }
 }
