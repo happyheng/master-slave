@@ -22,8 +22,12 @@ public class OptionalDataSource extends AbstractRoutingDataSource {
 
             double random = Math.random();
             int randomIndex = (int)(random * slaveDataSource.length);
+
+            System.out.println("访问的是从数据库" + (randomIndex + 1));
             return slaveDataSource[randomIndex];
         } else {
+
+            System.out.println("访问的是主数据库");
             return masterDataSource;
         }
     }

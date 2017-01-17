@@ -1,7 +1,8 @@
 package com.happyheng.dao;
 
-import com.happyheng.Mapper.UserMapperMapper;
+import com.happyheng.Mapper.UserMapper;
 import com.happyheng.datasource.DataSourceProxy;
+import com.happyheng.entity.People;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -14,7 +15,7 @@ import javax.annotation.Resource;
 public class UserDao {
 
     @Resource
-    private UserMapperMapper userMapperMapper;
+    private UserMapper userMapper;
 
 
     public Integer getIdByName(String name) {
@@ -23,7 +24,17 @@ public class UserDao {
         DataSourceProxy.setDataSource(DataSourceProxy.DataSourceEnum.SLAVE);
 
         // 2.访问数据库
-        return userMapperMapper.getIdByName(name);
+        return userMapper.getIdByName(name);
+    }
+
+    public Integer insertUser(People people) {
+
+        // 1.设置为从数据库
+        DataSourceProxy.setDataSource(DataSourceProxy.DataSourceEnum.MASTER);
+
+        // 2.访问数据库
+        userMapper.insertUser(people);
+        return people.getId();
     }
 
 }
